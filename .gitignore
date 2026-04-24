@@ -9,6 +9,7 @@ Thumbs.db
 
 # Logs
 *.log
+logs/
 
 # Node (if ever needed)
 node_modules/

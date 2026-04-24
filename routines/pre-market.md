@@ -6,14 +6,14 @@ IMPORTANT — ENVIRONMENT VARIABLES:
 
 - Every API key is ALREADY exported as a process env var:
   ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_ENDPOINT, ALPACA_DATA_ENDPOINT,
-  XAI_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
+  OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
 - There is NO .env file in this repo and you MUST NOT create, write, or source one.
   The wrapper scripts read directly from the process env.
 - If a wrapper prints "KEY not set in environment" -> STOP, send one
   Telegram alert naming which var is missing, then exit. Do NOT try
   to create a .env as a workaround.
 - Verify env vars BEFORE any wrapper call:
-  for v in ALPACA_API_KEY ALPACA_SECRET_KEY XAI_API_KEY \
+  for v in ALPACA_API_KEY ALPACA_SECRET_KEY OPENROUTER_API_KEY \
    TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID; do
   [[-n "${!v:-}"]] && echo "$v: set" || echo "$v: MISSING"
   done

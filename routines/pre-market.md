@@ -37,27 +37,35 @@ bash scripts/alpaca.sh account
 bash scripts/alpaca.sh positions
 bash scripts/alpaca.sh orders
 
-STEP 3 — Research market context via Grok. Run bash scripts/grok.sh search "<query>" for each:
+STEP 3 — Run the v10 gap-up scan FIRST. This is the canonical entry signal:
 
-- "WTI and Brent oil price right now"
+  bash scripts/gap-scan.sh --top 10
+
+For each candidate (top 3-5 typically), use Grok to identify the *catalyst*
+behind the gap day (earnings beat? contract win? FDA decision? M&A? upgrade?):
+
+  bash scripts/grok.sh news "<TICKER> earnings OR news <gap_date>"
+  bash scripts/grok.sh sentiment "<TICKER>"
+
+A candidate without a clearly identifiable catalyst should be skipped — the
+v10 edge depends on the gap being driven by real news, not noise/error prints.
+
+Also research broader market context via Grok:
 - "S&P 500 futures premarket today"
 - "VIX level today"
-- "Top stock market catalysts today $DATE"
-- "Earnings reports today before market open"
 - "Economic calendar today CPI PPI FOMC jobs data"
-- "S&P 500 sector momentum YTD"
 - News on any currently-held ticker: bash scripts/grok.sh news "<TICKER>"
-- Sentiment on held tickers: bash scripts/grok.sh sentiment "<TICKER>"
 
 If Grok exits 3, fall back to native WebSearch and note the fallback in the log entry.
 
 STEP 4 — Write a dated entry to memory/RESEARCH-LOG.md:
 
 - Account snapshot (equity, cash, buying power, daytrade count)
-- Market context (oil, indices, VIX, today's releases)
-- 2-3 actionable trade ideas WITH catalyst + entry/stop/target
+- Gap-scan output (top candidates with scores, last_close, sma50)
+- For each candidate considered: catalyst + entry plan + position size + stop (compute via `bash scripts/atr.sh SYM`)
+- Market context (futures, VIX, today's releases)
 - Risk factors for the day
-- Decision: trade or HOLD (default HOLD — patience > activity)
+- Decision: trade or HOLD (default HOLD — if no candidate has a clear catalyst, do nothing)
 
 STEP 5 — Update memory/PORTFOLIO-STATE.md with fresh account data.
 

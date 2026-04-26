@@ -16,20 +16,21 @@ Open these in order before doing anything:
 - memory/lessons/INDEX.md      — Past trade lessons. Scan before generating ideas; open any card whose tags/sector match today's setup.
 - memory/BACKTEST-RESULTS.md   — Latest backtest of current rules. Read before changing the strategy.
 
-## Strategy Hard Rules (v3 — quick reference)
+## Strategy Hard Rules (v10 — quick reference)
+
+Mental model: **buy the day after a fresh positive catalyst** (earnings beat, news, contract, FDA decision) when the stock gapped up and held the gap. Ride the post-catalyst drift for 30-60 days. Sector-agnostic.
 
 - NO OPTIONS — ever.
-- Max 5-6 open positions.
-- Max 20% per position.
+- Max 5-6 open positions, max 20% per position. Sizing: 18% of equity per entry.
 - Max 3 new trades per week.
-- 75-85% capital deployed.
+- **Entry signal**: run `bash scripts/gap-scan.sh` every pre-market. Stock must have a ≥3% gap-up in last 5 days, gap day closed ≥ open, stock currently above 50-day SMA. Take top candidates by score.
 - **ATR-based trailing stop** on every position as a real GTC order: trail = 2.5 × ATR(20) in DOLLARS. Compute via `bash scripts/atr.sh SYM`. Use `trail_price` on the Alpaca order, not `trail_percent`.
-- **NO fixed -7% hard cut.** The ATR trail handles risk. (Backtest: hard cut was firing on normal pullbacks, 3% win rate when it fired.)
-- Tighten at gain milestones: at +15%, trail = MAX(2×ATR, 7%); at +20%, trail = MAX(1.5×ATR, 5%).
-- Never within 3% of current price. Never move a stop down.
-- Thesis-break exit (manual): close if the catalyst is invalidated, regardless of trail.
-- Follow sector momentum (top 3 SPDR sector ETFs by 60d return). Exit a sector after 2 consecutive failed trades (14-day ban).
-- Patience > activity.
+- **NO fixed -7% hard cut.** The ATR trail handles risk.
+- Tighten at gain milestones: at +15%, trail = MAX(2×ATR, 7%); at +20%, trail = MAX(1.5×ATR, 5%). Never within 3% of price. Never move a stop down.
+- **60-day max hold**: close at next open if a position has been open ≥60 calendar days. PEAD drift exhausts; don't hold past edge.
+- Thesis-break exit (manual): close immediately if catalyst is invalidated.
+- Sector ban: 2 consecutive losses in a sector → 14-day ban.
+- Patience > activity. Default HOLD if no scan candidates clear the bar.
 
 See memory/BACKTEST-RESULTS.md for evidence. See memory/TRADING-STRATEGY.md for the full rulebook.
 
@@ -85,6 +86,14 @@ bash scripts/safety-check.sh BUY SYM QTY PRICE SECTOR
 ```
 Returns JSON with pass/fail and reasons. MUST run this before EVERY buy order. If it fails, do NOT place the trade — log the reason and move on.
 
+### Gap Scan (scripts/gap-scan.sh)
+```
+bash scripts/gap-scan.sh                  # JSON: ranked candidates as of today
+bash scripts/gap-scan.sh --top 5          # only top 5
+bash scripts/gap-scan.sh 2026-04-24       # historical scan (debugging)
+```
+v10 entry signal. Returns ranked list of stocks that had a ≥3% gap-up in the last 5 trading days, held the gap, and are above their 50d SMA. Run this every pre-market. Each candidate has: ticker, sector, score, last_close, sma50.
+
 ### ATR (scripts/atr.sh)
 ```
 bash scripts/atr.sh SYM [PERIOD=20]   # JSON: atr, last_close, trail_dollars (=2.5×ATR), trail_pct_equiv
@@ -110,23 +119,25 @@ Run EVERY time a position closes (at midday cut, daily-summary stop fire, or the
 
 Before placing any buy order, every single one of these checks must pass. If any fail, the trade is skipped and the reason is logged.
 
-1. Run `bash scripts/safety-check.sh BUY SYM QTY PRICE SECTOR`
-2. Total positions after this fill will be no more than 6
-3. Total trades placed this week (including this one) is no more than 3
-4. Position cost is no more than 20% of account equity
-5. Position cost is no more than available cash
-6. Pattern day trader day-trade count leaves room (under 3 on a sub-$25k account)
-7. A specific catalyst is documented in today's research log entry
-8. The instrument is a stock (not an option, not anything else)
+1. Ticker appeared in today's `bash scripts/gap-scan.sh` output with score > 0
+2. Run `bash scripts/safety-check.sh BUY SYM QTY PRICE SECTOR`
+3. Total positions after this fill will be no more than 6
+4. Total trades placed this week (including this one) is no more than 3
+5. Position cost is no more than 20% of account equity
+6. Position cost is no more than available cash
+7. Pattern day trader day-trade count leaves room (under 3 on a sub-$25k account)
+8. A specific catalyst is documented in today's research log entry (what happened on the gap day — earnings? news? FDA?)
+9. The instrument is a stock (not an option, not anything else)
 
-## Sell-Side Rules (v3)
+## Sell-Side Rules (v10)
 
-Evaluated at the midday scan and opportunistically:
+Evaluated at the midday scan and EOD:
 - The ATR trailing stop fires automatically (Alpaca GTC). Don't preempt it on price action alone.
-- If the thesis has broken (catalyst invalidated, sector rolling over, news event), close immediately — this is the only discretionary exit.
+- **60-day max hold**: at midday and EOD, check every position's days-since-entry. If ≥60, close at next open. PEAD drift exhausts.
+- If the thesis has broken (catalyst invalidated, breaking news), close immediately — this is the only discretionary exit.
 - If position is up +20% or more, tighten trailing stop to MAX(1.5×ATR, 5% of current price).
 - If position is up +15% or more, tighten trailing stop to MAX(2×ATR, 7% of current price).
-- If a sector has two consecutive failed trades, exit all positions in that sector.
+- If a sector has two consecutive failed trades, exit all positions in that sector and ban for 14 days.
 
 ## Alpaca Gotchas
 

@@ -28,7 +28,11 @@ STEP 2 — Pull current state:
   bash scripts/alpaca.sh positions
   bash scripts/alpaca.sh orders
 
-STEP 3 — Skipped. The v1 strategy cut every position at -7% here; v3 has removed that rule (see memory/TRADING-STRATEGY.md and BACKTEST-RESULTS.md). The ATR trailing stop handles risk now. The only discretionary exit is the thesis-break check in STEP 5.
+STEP 3 — Time-exit check (v10). For every open position, compute days-since-entry from TRADE-LOG. If ≥60 calendar days:
+  bash scripts/alpaca.sh close SYM
+  bash scripts/alpaca.sh cancel STOP_ORDER_ID
+Log the exit to TRADE-LOG (exit price, P&L, reason="60d_max_hold"). PEAD drift exhausts ~60 days post-catalyst, so we close the position regardless of P&L. Create a lesson card with exit_reason=time_60d.
+(The old v1 rule that cut at -7% has been removed — ATR trail handles drawdown risk.)
 
 STEP 4 — Tighten trailing stops on winners. For each eligible position:
   bash scripts/atr.sh SYM   # get current ATR

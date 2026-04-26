@@ -26,6 +26,10 @@ STEP 1 — Read memory for today's plan:
 - tail of memory/TRADE-LOG.md (for weekly trade count)
 - memory/CIRCUIT-BREAKER.md (for sector bans, weekly count)
 
+The candidates to execute come from today's RESEARCH-LOG entry, which was
+generated from `bash scripts/gap-scan.sh` plus Grok catalyst confirmation.
+Each must have a documented catalyst (earnings/news/FDA/etc.) to qualify.
+
 STEP 2 — Re-validate with live data:
   bash scripts/alpaca.sh account
   bash scripts/alpaca.sh positions

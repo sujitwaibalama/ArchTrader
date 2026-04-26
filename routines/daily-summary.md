@@ -36,11 +36,12 @@ Format: ## YYYY-MM-DD — EOD Snapshot
 - List each open position on one line: SYM | shares | entry | now | unreal P&L%
 - If no positions: "No open positions."
 
-STEP 4 — Check sell-side rules one final time before market close:
-- Any position with unrealized loss <= -7%? Close it now if market still open.
-- Any position up >= +20%? Verify trailing stop is tightened to 5%.
-- Any position up >= +15%? Verify trailing stop is tightened to 7%.
+STEP 4 — Check v10 sell-side rules one final time before market close:
+- Any position open >=60 days since entry? Close at market and cancel its stop (60d_max_hold).
+- Any position up >=+20%? Verify trailing stop is at MAX(1.5×ATR, 5% of price).
+- Any position up >=+15%? Verify trailing stop is at MAX(2×ATR, 7% of price).
 - If any action taken, log it to TRADE-LOG.md and update PORTFOLIO-STATE.md.
+(The old -7% hard cut is removed in v10 — ATR trail handles this.)
 
 STEP 4b — Lesson cards for any position closed today:
 For every position that exited today (whether trailing stop fired, hard cut, or thesis break):

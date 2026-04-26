@@ -60,13 +60,17 @@ If also blocked, queue the stop in TRADE-LOG as "PDT-blocked, set tomorrow AM".
 Record the trail_dollars value in TRADE-LOG so future tightening can compare.
 
 STEP 6 — Append each trade to memory/TRADE-LOG.md (matching existing format):
-Date, ticker, side, shares, entry price, stop level, thesis, target, R:R.
+Date, ticker, side, shares, entry price, stop level, thesis, target, R:R, catalyst_type.
+
+STEP 6b — Append one decision-journal line per candidate processed (filled, partial, skipped, blocked):
+  bash -c 'echo "$(date "+%Y-%m-%d %H:%M") | market-open | <ACTION> | <TICKER> | <REASON>" >> memory/DECISION-JOURNAL.md'
+ACTION ∈ {BUY, SKIP, BLOCKED}. Reason names the gate that decided (e.g., "filled at $147.28, ATR stop placed", "skipped — wide spread", "BLOCKED — safety-check failed: position cost > 20% equity"). One line per ticker even if it was just confirming a SKIP.
 
 STEP 7 — Notification: only if a trade was actually placed.
   bash scripts/notify.sh "<tickers, shares, fill prices, one-line why>"
 
 STEP 8 — COMMIT AND PUSH (mandatory if any trades executed):
-  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md
+  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md memory/DECISION-JOURNAL.md
   git commit -m "market-open trades $DATE"
   git push origin main
 Skip commit if no trades fired. On push failure: rebase and retry.

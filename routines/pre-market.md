@@ -23,14 +23,16 @@ IMPORTANT — PERSISTENCE:
 - This workspace is a fresh clone. File changes VANISH unless you
   commit and push to main. You MUST commit and push at STEP 6.
 
-STEP 1 — Read memory for context:
+STEP 1 — Read memory for context. ORDER MATTERS — start with yesterday's brain:
 
-- memory/TRADING-STRATEGY.md
-- tail of memory/TRADE-LOG.md
-- tail of memory/RESEARCH-LOG.md
-- memory/PORTFOLIO-STATE.md
-- memory/CIRCUIT-BREAKER.md
-- memory/lessons/INDEX.md (scan all entries; for each candidate idea today, open any lesson card whose ticker, sector, or pattern tags match the setup — apply that learning before placing the trade)
+a) memory/DAILY-REFLECTION.md — read the MOST RECENT entry (newest at bottom). This is yesterday's "what worked / didn't / regime / watching". Today's plan must respond to it.
+b) memory/EDGE-TRACKER.md — note the Last-30 and Last-90 stats. Any catalyst type marked 🚫 DEMOTE → demote candidates with that catalyst. Any ✅ FAVOR → weight higher.
+c) memory/lessons/INDEX.md — scan all entries; for each candidate idea today, open any lesson card whose ticker, sector, or pattern tags match the setup. Apply that learning BEFORE placing the trade.
+d) memory/TRADING-STRATEGY.md — rulebook
+e) tail of memory/TRADE-LOG.md
+f) tail of memory/RESEARCH-LOG.md
+g) memory/PORTFOLIO-STATE.md
+h) memory/CIRCUIT-BREAKER.md
 
 STEP 2 — Pull live account state:
 bash scripts/alpaca.sh account
@@ -61,11 +63,17 @@ If Grok exits 3, fall back to native WebSearch and note the fallback in the log 
 STEP 4 — Write a dated entry to memory/RESEARCH-LOG.md:
 
 - Account snapshot (equity, cash, buying power, daytrade count)
+- "Yesterday's reflection applied:" — 1-2 lines naming which prior-day signal you're acting on or against
+- "Edge-tracker bias:" — 1 line naming any catalyst type FAVOR/DEMOTE you applied
 - Gap-scan output (top candidates with scores, last_close, sma50)
-- For each candidate considered: catalyst + entry plan + position size + stop (compute via `bash scripts/atr.sh SYM`)
+- For each candidate considered: catalyst_type + entry plan + position size + stop (compute via `bash scripts/atr.sh SYM`)
 - Market context (futures, VIX, today's releases)
 - Risk factors for the day
 - Decision: trade or HOLD (default HOLD — if no candidate has a clear catalyst, do nothing)
+
+STEP 4b — Append one decision-journal line per candidate (whether traded or skipped):
+  bash -c 'echo "$(date "+%Y-%m-%d %H:%M") | pre-market | <ACTION> | <TICKER> | <REASON>" >> memory/DECISION-JOURNAL.md'
+Where ACTION is BUY-PLAN (we intend to buy at open) or SKIP. Reason names the rule (e.g., "rank 1, earnings_beat, edge-tracker FAVOR" or "no Grok-confirmable catalyst").
 
 STEP 5 — Update memory/PORTFOLIO-STATE.md with fresh account data.
 
@@ -75,7 +83,7 @@ a thesis broke overnight, a major geopolitical event):
 bash scripts/notify.sh "<one line>"
 
 STEP 7 — COMMIT AND PUSH (mandatory):
-git add memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md
+git add memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md memory/DECISION-JOURNAL.md
 git commit -m "pre-market research $DATE"
 git push origin main
 On push failure: git pull --rebase origin main, then push again. Never force-push.

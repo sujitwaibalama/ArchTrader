@@ -22,7 +22,11 @@ STEP 1 — Read memory for full week context:
 - memory/WEEKLY-REVIEW.md (match existing template exactly)
 - ALL this week's entries in memory/TRADE-LOG.md
 - ALL this week's entries in memory/RESEARCH-LOG.md
+- ALL this week's entries in memory/DAILY-REFLECTION.md (5 reflections)
+- ALL this week's entries in memory/DECISION-JOURNAL.md (every BUY/SKIP/HOLD/EXIT)
+- memory/EDGE-TRACKER.md (Last-30 and Last-90 tables)
 - memory/TRADING-STRATEGY.md
+- memory/BACKTEST-RESULTS.md (for edge-decay comparison in STEP 4b)
 - memory/lessons/INDEX.md AND every lesson card created this week (read full body, not just index line). Use them to populate "What worked" / "What didn't" / "Key lessons" with concrete pattern names.
 
 STEP 2 — Pull week-end state:
@@ -51,6 +55,20 @@ STEP 4 — Append full review section to memory/WEEKLY-REVIEW.md:
 - Adjustments for next week
 - Overall letter grade A-F
 
+STEP 4b — Edge decay check (NEW):
+Compare this week's metrics to the latest backtest baseline in memory/BACKTEST-RESULTS.md.
+- Backtest baseline (v10): win rate ~54%, profit factor ~1.91, Sharpe ~1.28
+- This week's actuals: win rate, profit factor (sum winners / |sum losers|), avg P&L
+- If win-rate is >10 percentage points below baseline (e.g., <44% over 8+ trades) → write a "🚩 EDGE DECAY" callout in this week's review:
+    🚩 EDGE DECAY: actual win% X% vs baseline 54%. Investigate: is regime different? Are catalyst types we're trading still working (check EDGE-TRACKER.md Last-30)? Consider tightening selectivity next week.
+- If sample is <8 trades, write "Sample too small for decay check" and skip the flag.
+
+STEP 4c — Decision-journal hit-rate (NEW):
+From memory/DECISION-JOURNAL.md this week, count:
+- BUYs that became winners vs losers
+- SKIPs — for any SKIP where the ticker subsequently ran +10% within 5 days, mark as "missed gain". For any SKIP where the ticker dropped, mark as "defended capital".
+Add a one-liner to the review: "Skip discipline: N saved, M missed (run if appended ≥10% within 5 days)". This tells us if our filters are too tight or too loose.
+
 STEP 5 — If a rule has proven itself for 2+ weeks or failed badly, also
 update memory/TRADING-STRATEGY.md in the same commit and call out the
 change in the review.
@@ -69,7 +87,7 @@ STEP 7 — Send ONE Telegram message. <= 15 lines:
   Grade: <letter>"
 
 STEP 8 — COMMIT AND PUSH (mandatory):
-  git add memory/WEEKLY-REVIEW.md memory/TRADING-STRATEGY.md memory/CIRCUIT-BREAKER.md memory/PORTFOLIO-STATE.md
+  git add memory/WEEKLY-REVIEW.md memory/TRADING-STRATEGY.md memory/CIRCUIT-BREAKER.md memory/PORTFOLIO-STATE.md memory/EDGE-TRACKER.md
   git commit -m "weekly review $DATE"
   git push origin main
 If TRADING-STRATEGY.md didn't change, add just WEEKLY-REVIEW.md.

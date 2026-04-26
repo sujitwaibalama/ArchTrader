@@ -48,6 +48,32 @@ For every position that exited today (whether trailing stop fired, hard cut, or 
   bash scripts/lesson-card.sh SYM SECTOR ENTRY_DATE $DATE ENTRY_PX EXIT_PX SHARES PNL_PCT EXIT_REASON "<one-line lesson>" "<tags>"
 Then OPEN each new card and fill in Setup / Expected / Actual / Why from the original RESEARCH-LOG entry + the live news at exit. Skip if no positions closed today.
 
+STEP 4c — Update memory/EDGE-TRACKER.md for every position that closed today:
+- Append one row to the trade-by-trade ledger (Date | Ticker | Sector | Catalyst Type | Entry | Exit | P&L % | Hold Days | Exit Reason). Catalyst type comes from the original RESEARCH-LOG entry (or TRADE-LOG if recorded there).
+- Recompute the Last-30 and Last-90 rolling tables: for each catalyst_type appearing in the ledger, count trades / wins / win% / avg P&L over the corresponding window. Set status:
+    ✅ FAVOR  if win% ≥ 55% AND trades ≥ 4
+    🚫 DEMOTE if win% < 40% AND trades ≥ 4
+    ⚠️ NEUTRAL otherwise
+Skip this step if no positions closed today.
+
+STEP 4d — Append today's reflection to memory/DAILY-REFLECTION.md (ALWAYS — even on no-action days):
+  ## $DATE — Reflection
+
+  ### What worked today
+  - <specific signal/action that paid off; if nothing happened, write "no closes today; open positions tracking expectations" or similar truth>
+
+  ### What didn't work
+  - <specific setup that misfired — name the pattern/sector/catalyst, not just the ticker>
+
+  ### Market regime read
+  - <risk-on / risk-off / mixed>. Leadership: <sectors>. VIX: X. SPY day: ±X%.
+
+  ### Watching tomorrow
+  - <tickers, sectors, levels, or catalysts to watch>
+  - <any rule to bias toward/away from given today's evidence>
+
+Keep it tight. Future-you reads this in 30 seconds tomorrow morning.
+
 STEP 5 — Send ONE Telegram summary (always — even if nothing happened):
   bash scripts/notify.sh "ArcTrader EOD $DATE
 Portfolio: \$X | Day: ±\$X (±X%)
@@ -61,7 +87,7 @@ $(if no action: No trades today.)"
 Keep it under 15 lines total.
 
 STEP 6 — COMMIT AND PUSH (mandatory):
-  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md memory/lessons/
+  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md memory/lessons/ memory/DAILY-REFLECTION.md memory/EDGE-TRACKER.md memory/DECISION-JOURNAL.md
   git commit -m "EOD snapshot $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again. Never force-push.

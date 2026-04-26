@@ -56,11 +56,15 @@ Update CIRCUIT-BREAKER.md sector counter if the exit was a loss.
 
 STEP 6 — Optional intraday research via Grok if something is moving sharply with no obvious cause. Append afternoon addendum to RESEARCH-LOG.
 
+STEP 6b — Append one decision-journal line per OPEN position processed (action OR no-op):
+  bash -c 'echo "$(date "+%Y-%m-%d %H:%M") | midday | <ACTION> | <TICKER> | <REASON>" >> memory/DECISION-JOURNAL.md'
+ACTION ∈ {HOLD, TIGHTEN, EXIT}. Reason names the rule (e.g., "tightened to MAX(2×ATR, 7%) at +15.2%", "60d max-hold fired", "thesis broken — earnings miss reported", "HOLD — no rule fired, +4.1%"). Always write a line even if no action — silence is data too.
+
 STEP 7 — Notification: only if action was taken.
   bash scripts/notify.sh "<action summary>"
 
 STEP 8 — COMMIT AND PUSH (if any memory files changed):
-  git add memory/TRADE-LOG.md memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md memory/lessons/
+  git add memory/TRADE-LOG.md memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md memory/lessons/ memory/DECISION-JOURNAL.md
   git commit -m "midday scan $DATE"
   git push origin main
 Skip commit if no-op. On push failure: rebase and retry.

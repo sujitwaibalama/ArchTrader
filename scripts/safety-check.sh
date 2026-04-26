@@ -73,13 +73,9 @@ today = date.today()
 monday = today - timedelta(days=today.weekday())
 print(monday.isoformat())
 ")
-  # Count BUY entries from Monday onward
-  WEEKLY_TRADES=$(grep -c "| BUY |" "$TRADE_LOG" 2>/dev/null | python3 -c "
-import sys
-# Simple count of BUY lines — good enough for safety check
-# The routine prompt does the precise date filtering
-print(sys.stdin.read().strip())
-" 2>/dev/null || echo "0")
+  # Count BUY entries this week (grep -c exits 1 on zero matches; || true preserves the "0" output)
+  WEEKLY_TRADES=$(grep -c "| BUY |" "$TRADE_LOG" 2>/dev/null || true)
+  WEEKLY_TRADES="${WEEKLY_TRADES:-0}"
 fi
 
 # Check circuit breaker for sector bans

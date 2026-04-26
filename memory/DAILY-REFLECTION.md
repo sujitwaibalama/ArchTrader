@@ -32,3 +32,20 @@ The pre-market routine reads only the **most recent entry**. To look back furthe
 ---
 
 <!-- Entries appended below by daily-summary, newest at the bottom -->
+
+## 2026-04-26 — Reflection
+
+### What worked today
+- No closes today; weekend non-trading day. Both positions tracking near-flat since Friday open: XOM +1.0%, NVDA −0.95%.
+
+### What didn't work
+- Stops are still legacy 10% trail_percent (v1) — not v10 ATR-dollar stops. Migration planned for Mon market-open.
+
+### Market regime read
+- Last trading day (Fri Apr 24): mixed. SPY closed at $714.01, +0.46% since phase start. Bot equity $100,010 (+0.01%). Alpha: −0.45%.
+- Energy (XOM) holding gains; Technology (NVDA) slightly underwater on AI infrastructure position.
+
+### Watching tomorrow
+- Execute v10 migration at Mon open: cancel legacy stops on XOM + NVDA, close both, run gap-scan, redeploy 2-3 v10 candidates with ATR trail_price stops.
+- Watch for gap-scan candidates with fresh earnings/catalyst catalysts from weekend news.
+- Bias toward earnings_beat catalyst type (strongest PEAD signal from backtest).

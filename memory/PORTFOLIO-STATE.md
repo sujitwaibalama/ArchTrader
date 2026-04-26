@@ -27,5 +27,12 @@ Update on every daily-summary run via: `bash scripts/spy-benchmark.sh`
 ## Pending Orders
 | Type | Symbol | Qty | Trail | Order ID |
 |------|--------|-----|-------|----------|
-| Trailing Stop GTC | XOM | 135 | 10% | fa892987-5f63-43af-8e58-af2aa8153e9f |
-| Trailing Stop GTC | NVDA | 94 | 10% | 5af7082f-46b1-4041-9c85-913f471a884e |
+| Trailing Stop GTC | XOM | 135 | 10% (legacy v1) | fa892987-5f63-43af-8e58-af2aa8153e9f |
+| Trailing Stop GTC | NVDA | 94 | 10% (legacy v1) | 5af7082f-46b1-4041-9c85-913f471a884e |
+
+## Planned for 2026-04-27 (Mon market open)
+**v10 migration** (approved by user, plan in RESEARCH-LOG 2026-04-27 entry):
+1. Cancel both legacy stops above
+2. Close XOM and NVDA at market
+3. Run fresh gap-scan + Grok catalyst confirmation
+4. Deploy 2-3 v10 candidates with ATR-based trail_price stops

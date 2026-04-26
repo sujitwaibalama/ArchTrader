@@ -45,11 +45,15 @@ STEP 4 — Execute the buys (market orders, day TIF):
   bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"buy","type":"market","time_in_force":"day"}'
 Wait for fill confirmation before placing the stop.
 
-STEP 5 — Immediately place 10% trailing stop GTC for each new position:
-  bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"trailing_stop","trail_percent":"10","time_in_force":"gtc"}'
-If Alpaca rejects with PDT error, fall back to fixed stop 10% below entry:
+STEP 5 — Immediately place an ATR-based trailing stop GTC for each new position.
+  Compute the trail amount in DOLLARS:
+    bash scripts/atr.sh SYM     # outputs trail_dollars = 2.5 × ATR(20)
+  Then place the order with trail_price (NOT trail_percent):
+    bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"trailing_stop","trail_price":"TRAIL_DOLLARS","time_in_force":"gtc"}'
+If Alpaca rejects with PDT error, fall back to a fixed stop = entry_price - trail_dollars:
   bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"stop","stop_price":"X.XX","time_in_force":"gtc"}'
 If also blocked, queue the stop in TRADE-LOG as "PDT-blocked, set tomorrow AM".
+Record the trail_dollars value in TRADE-LOG so future tightening can compare.
 
 STEP 6 — Append each trade to memory/TRADE-LOG.md (matching existing format):
 Date, ticker, side, shares, entry price, stop level, thesis, target, R:R.

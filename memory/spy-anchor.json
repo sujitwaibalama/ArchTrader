@@ -1,0 +1,6 @@
+{
+  "phase_start_date": "2026-04-24",
+  "starting_equity": 100000,
+  "spy_anchor_price": 710.75,
+  "_note": "SPY's open price on phase start. Used by scripts/spy-benchmark.sh to compute bot-vs-SPY each day. Update only at the start of a new measurement phase."
+}

@@ -28,20 +28,27 @@ STEP 2 — Pull current state:
   bash scripts/alpaca.sh positions
   bash scripts/alpaca.sh orders
 
-STEP 3 — Cut losers immediately. For every position where unrealized_plpc <= -0.07:
+STEP 3 — Skipped. The v1 strategy cut every position at -7% here; v3 has removed that rule (see memory/TRADING-STRATEGY.md and BACKTEST-RESULTS.md). The ATR trailing stop handles risk now. The only discretionary exit is the thesis-break check in STEP 5.
+
+STEP 4 — Tighten trailing stops on winners. For each eligible position:
+  bash scripts/atr.sh SYM   # get current ATR
+Then compute the new trail in DOLLARS:
+- Up >= +20%: new_trail = MAX(1.5 × ATR, 0.05 × current_price)
+- Up >= +15%: new_trail = MAX(2 × ATR, 0.07 × current_price)
+Cancel the old trailing stop, place the new one with `trail_price` (NOT trail_percent):
+  bash scripts/alpaca.sh cancel OLD_ORDER_ID
+  bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"trailing_stop","trail_price":"NEW_TRAIL","time_in_force":"gtc"}'
+Never tighten within 3% of current price. Never move a stop down (only up — i.e. if the new trail_price is LARGER than the old one, skip).
+
+STEP 5 — Thesis check (the only discretionary exit in v3). For each open position:
+  bash scripts/grok.sh news "<TICKER>"
+If the catalyst that justified the entry has been invalidated (earnings miss, FDA reject, sector rolling over hard, geopolitical shift, M&A break), close the position immediately even if the trail hasn't fired:
   bash scripts/alpaca.sh close SYM
-  bash scripts/alpaca.sh cancel ORDER_ID    # cancel its trailing stop
-Log the exit to TRADE-LOG: exit price, realized P&L, "cut at -7% per rule".
-Update CIRCUIT-BREAKER.md: increment consecutive loss counter for that sector.
-
-STEP 4 — Tighten trailing stops on winners. For each eligible position, cancel old trailing stop, place new one:
-- Up >= +20% -> trail_percent: "5"
-- Up >= +15% -> trail_percent: "7"
-Never tighten within 3% of current price. Never move a stop down.
-
-STEP 5 — Thesis check. If a thesis broke intraday, cut the position even if not at -7% yet.
-Use bash scripts/grok.sh news "<TICKER>" to check for breaking news.
-Document reasoning in TRADE-LOG.
+  bash scripts/alpaca.sh cancel STOP_ORDER_ID
+Document reasoning in TRADE-LOG. Create a lesson card:
+  bash scripts/lesson-card.sh SYM SECTOR ENTRY_DATE $DATE ENTRY_PX EXIT_PX SHARES PNL_PCT thesis_break "<one-line lesson>" "<tags>"
+Then OPEN the lesson card and fill in Setup / Expected / Actual / Why.
+Update CIRCUIT-BREAKER.md sector counter if the exit was a loss.
 
 STEP 6 — Optional intraday research via Grok if something is moving sharply with no obvious cause. Append afternoon addendum to RESEARCH-LOG.
 
@@ -49,7 +56,7 @@ STEP 7 — Notification: only if action was taken.
   bash scripts/notify.sh "<action summary>"
 
 STEP 8 — COMMIT AND PUSH (if any memory files changed):
-  git add memory/TRADE-LOG.md memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md
+  git add memory/TRADE-LOG.md memory/RESEARCH-LOG.md memory/PORTFOLIO-STATE.md memory/CIRCUIT-BREAKER.md memory/lessons/
   git commit -m "midday scan $DATE"
   git push origin main
 Skip commit if no-op. On push failure: rebase and retry.

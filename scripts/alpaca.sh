@@ -41,6 +41,18 @@ case "$cmd" in
     sym="${1:?usage: quote SYM}"
     curl -fsS -H "$H_KEY" -H "$H_SEC" "$DATA/stocks/$sym/quotes/latest"
     ;;
+  bars)
+    sym="${1:?usage: bars SYM [TIMEFRAME=1Day] [LIMIT=30]}"
+    tf="${2:-1Day}"
+    lim="${3:-30}"
+    # Compute start date = today - max(lim*2, 90) calendar days (covers weekends/holidays)
+    days_back=$((lim * 2))
+    [[ $days_back -lt 90 ]] && days_back=90
+    start_d=$(date -u -d "$days_back days ago" +%Y-%m-%d)
+    feed="${ALPACA_DATA_FEED:-iex}"
+    curl -fsS -H "$H_KEY" -H "$H_SEC" \
+      "$DATA/stocks/$sym/bars?timeframe=$tf&limit=$lim&start=$start_d&adjustment=raw&feed=$feed&sort=desc"
+    ;;
   orders)
     status="${1:-open}"
     curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/orders?status=$status"

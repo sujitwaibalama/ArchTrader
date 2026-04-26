@@ -30,6 +30,7 @@ STEP 1 — Read memory for context:
 - tail of memory/RESEARCH-LOG.md
 - memory/PORTFOLIO-STATE.md
 - memory/CIRCUIT-BREAKER.md
+- memory/lessons/INDEX.md (scan all entries; for each candidate idea today, open any lesson card whose ticker, sector, or pattern tags match the setup — apply that learning before placing the trade)
 
 STEP 2 — Pull live account state:
 bash scripts/alpaca.sh account

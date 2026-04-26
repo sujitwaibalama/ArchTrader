@@ -28,6 +28,7 @@ STEP 2 — Update memory/PORTFOLIO-STATE.md with fresh data:
 - Equity, cash, buying power, daytrade count
 - All open positions: symbol, qty, avg entry, current price, unrealized P&L ($ and %)
 - All open orders: type, symbol, qty, trail/stop level, order ID
+- SPY benchmark: run `bash scripts/spy-benchmark.sh` and update the "Benchmark — vs SPY" section with bot equity, SPY equiv, alpha.
 
 STEP 3 — Append EOD snapshot to memory/TRADE-LOG.md:
 Format: ## YYYY-MM-DD — EOD Snapshot
@@ -41,10 +42,15 @@ STEP 4 — Check sell-side rules one final time before market close:
 - Any position up >= +15%? Verify trailing stop is tightened to 7%.
 - If any action taken, log it to TRADE-LOG.md and update PORTFOLIO-STATE.md.
 
+STEP 4b — Lesson cards for any position closed today:
+For every position that exited today (whether trailing stop fired, hard cut, or thesis break):
+  bash scripts/lesson-card.sh SYM SECTOR ENTRY_DATE $DATE ENTRY_PX EXIT_PX SHARES PNL_PCT EXIT_REASON "<one-line lesson>" "<tags>"
+Then OPEN each new card and fill in Setup / Expected / Actual / Why from the original RESEARCH-LOG entry + the live news at exit. Skip if no positions closed today.
+
 STEP 5 — Send ONE Telegram summary (always — even if nothing happened):
   bash scripts/notify.sh "ArcTrader EOD $DATE
 Portfolio: \$X | Day: ±\$X (±X%)
-Phase P&L: ±\$X (±X%)
+Phase P&L: ±\$X (±X%) | vs SPY: ±X%
 Positions: N open
 $(list each: SYM ±X%)
 Orders: N GTC stops active
@@ -54,7 +60,7 @@ $(if no action: No trades today.)"
 Keep it under 15 lines total.
 
 STEP 6 — COMMIT AND PUSH (mandatory):
-  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md
+  git add memory/TRADE-LOG.md memory/PORTFOLIO-STATE.md memory/lessons/
   git commit -m "EOD snapshot $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again. Never force-push.

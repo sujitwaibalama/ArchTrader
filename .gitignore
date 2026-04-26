@@ -18,6 +18,8 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+backtest/data_cache.pkl
+backtest/equity_curve.json
 
 # Fallback notification file (local only)
 DAILY-SUMMARY.md

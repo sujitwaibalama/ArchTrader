@@ -23,6 +23,7 @@ STEP 1 — Read memory for full week context:
 - ALL this week's entries in memory/TRADE-LOG.md
 - ALL this week's entries in memory/RESEARCH-LOG.md
 - memory/TRADING-STRATEGY.md
+- memory/lessons/INDEX.md AND every lesson card created this week (read full body, not just index line). Use them to populate "What worked" / "What didn't" / "Key lessons" with concrete pattern names.
 
 STEP 2 — Pull week-end state:
   bash scripts/alpaca.sh account
@@ -38,6 +39,7 @@ STEP 3 — Compute the week's metrics:
 - Win rate (closed trades only)
 - Best trade, worst trade
 - Profit factor (sum winners / |sum losers|)
+- SPY benchmark via `bash scripts/spy-benchmark.sh` (use this as the authoritative bot-vs-SPY number; Grok web search is a fallback only).
 
 STEP 4 — Append full review section to memory/WEEKLY-REVIEW.md:
 - Week stats table

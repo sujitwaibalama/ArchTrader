@@ -63,6 +63,12 @@ Compare this week's metrics to the latest backtest baseline in memory/BACKTEST-R
     🚩 EDGE DECAY: actual win% X% vs baseline 54%. Investigate: is regime different? Are catalyst types we're trading still working (check EDGE-TRACKER.md Last-30)? Consider tightening selectivity next week.
 - If sample is <8 trades, write "Sample too small for decay check" and skip the flag.
 
+STEP 4b-DST — DST transition warning (NEW):
+US DST ends first Sunday of November and starts second Sunday of March. Cron times in scripts/setup-cron.sh are fixed UTC, so when DST shifts the bot fires 1 hour off in ET. Detect the transition window:
+  MM=$(date +%m); DD=$(date +%d)
+  if [[ ($MM == 10 && $DD -ge 25) || ($MM == 11 && $DD -le 7) ]] || [[ ($MM == 03 && $DD -ge 01 && $DD -le 14) ]]; then DST_WINDOW=1; fi
+If DST_WINDOW=1, prepend a "🕐 DST TRANSITION THIS WEEKEND — verify cron times in scripts/setup-cron.sh and re-run setup-cron.sh after the change" line to the weekly-review entry AND include it in the Telegram message. Otherwise skip.
+
 STEP 4c — Decision-journal hit-rate (NEW):
 From memory/DECISION-JOURNAL.md this week, count:
 - BUYs that became winners vs losers

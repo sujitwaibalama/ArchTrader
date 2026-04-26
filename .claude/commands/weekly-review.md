@@ -9,6 +9,7 @@ Run the Friday weekly review using local .env credentials.
 3. Compute: starting/ending portfolio, week return, S&P comparison, W/L/open, win rate, best/worst trade, profit factor.
 4. Append full review to memory/WEEKLY-REVIEW.md matching template exactly.
 4b. Edge-decay check vs BACKTEST-RESULTS baseline (v10: ~54% win, ~1.91 PF). If actual win% > 10pts below baseline on 8+ trades → flag 🚩 EDGE DECAY in the review and recommend tightening selectivity.
+4b-DST. DST transition warning: if today is Oct 25 – Nov 7 OR Mar 1 – Mar 14, prepend "🕐 DST TRANSITION THIS WEEKEND — verify cron times in scripts/setup-cron.sh and re-run setup-cron.sh after the change" to the review AND include in the Telegram message.
 4c. Decision-journal hit-rate: count BUYs (W/L) and SKIPs (defended capital vs missed gain — a SKIP is "missed" if the ticker ran ≥10% within 5 days). One-liner in the review.
 5. If a rule proved out for 2+ weeks or failed badly, update TRADING-STRATEGY.md.
 6. Reset weekly trade counter in CIRCUIT-BREAKER.md. Update sector bans.

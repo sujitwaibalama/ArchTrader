@@ -49,3 +49,19 @@ The pre-market routine reads only the **most recent entry**. To look back furthe
 - Execute v10 migration at Mon open: cancel legacy stops on XOM + NVDA, close both, run gap-scan, redeploy 2-3 v10 candidates with ATR trail_price stops.
 - Watch for gap-scan candidates with fresh earnings/catalyst catalysts from weekend news.
 - Bias toward earnings_beat catalyst type (strongest PEAD signal from backtest).
+
+## 2026-04-28 — Reflection
+
+### What worked today
+- Cash buffer (64% uninvested) cushioned the portfolio. Day equity +$224.73 despite AMD and QCOM both absorbing post-entry intraday volatility. Stops held comfortably above their triggers ($299.96 AMD vs $335.74 current; $141.61 QCOM vs $149.96 current).
+
+### What didn't work
+- PEAD drift hasn't materialized yet on either PEAD position. AMD had a wild intraday on day 1 (Apr 27: opened $346, hit $349, crashed to $335 close). QCOM similarly opened $156, peaked $161, closed $149. Both entries caught at an intraday top. Suggests entering at market-open on the day after a gap-up may be too early — consider waiting for a pullback/re-test before filling.
+
+### Market regime read
+- Mixed. SPY +0.64% from phase start (2026-04-24 anchor $710.75 → $715.31 latest). Semiconductor sector volatile — AMD and QCOM both saw strong intraday reversals on day 1. Risk-off pressure in tech specifically. VIX not available from current data feed.
+
+### Watching tomorrow
+- AMD: needs to reclaim $340+ to show PEAD drift is real. If it drifts below $330 (stop not triggered but thesis weakening), flag for thesis-break review.
+- QCOM: sitting -1.43% from entry. The $141.61 stop is 2.5×ATR away — let it ride but watch for any catalyst reversal (e.g., tariff news hitting handsets or automotive).
+- Consider entering limit orders at pullback levels rather than market-open fills on future gap-up candidates.

@@ -3,36 +3,32 @@
 Updated by every routine run. Current snapshot of account and positions.
 
 ## Last Updated
-2026-04-26 EOD (daily-summary, weekend — no market)
+2026-04-28 EOD (daily-summary)
 
 ## Account
-- Equity: $100,010.16
-- Cash: $60,329.93
-- Buying Power: $160,340.09
-- Deployed: ~39.7% ($39,680.23 in 2 positions)
-- Daytrade Count: 0
+- Equity: $100,234.89
+- Cash: $64,556.41
+- Buying Power: $164,791.30
+- Deployed: ~35.6% ($35,678.48 in 2 positions)
+- Daytrade Count: 2
 
 ## Benchmark — vs SPY (phase start 2026-04-24, $100,000)
-Update on every daily-summary run via: `bash scripts/spy-benchmark.sh`
-- Bot equity: $100,010.16 (+0.01%)
-- SPY equiv:  $100,457.97 (+0.46%)
-- Alpha:      −0.45% (last update 2026-04-26 EOD)
+- Bot equity: $100,234.89 (+0.23%)
+- SPY equiv:  $100,641.58 (+0.64%)
+- Alpha:      −0.41%
 
 ## Open Positions
-| Symbol | Shares | Entry | Sector | Cost Basis | Stop |
-|--------|--------|-------|--------|------------|------|
-| XOM | 135 | $147.44 | Energy | $19,904.40 | 10% trail (init $132.67) |
-| NVDA | 94 | $210.27 | Technology | $19,765.38 | 10% trail (init $189.32) |
+| Symbol | Shares | Entry | Sector | Cost Basis | Current | P&L | Stop |
+|--------|--------|-------|--------|------------|---------|-----|------|
+| AMD | 54 | $333.40 | Technology | $18,003.60 | $18,129.96 | +$126.36 (+0.70%) | $299.96 GTC fixed |
+| QCOM | 117 | $152.14 | Technology | $17,800.38 | $17,545.32 | −$255.06 (−1.43%) | $141.61 GTC fixed |
 
 ## Pending Orders
-| Type | Symbol | Qty | Trail | Order ID |
-|------|--------|-----|-------|----------|
-| Trailing Stop GTC | XOM | 135 | 10% (legacy v1) | fa892987-5f63-43af-8e58-af2aa8153e9f |
-| Trailing Stop GTC | NVDA | 94 | 10% (legacy v1) | 5af7082f-46b1-4041-9c85-913f471a884e |
+| Type | Symbol | Qty | Stop | Order ID |
+|------|--------|-----|------|----------|
+| Fixed Stop GTC | AMD | 54 | $299.96 | f30f9d0c-1dc6-409a-b5b5-baac14b70db9 |
+| Fixed Stop GTC | QCOM | 117 | $141.61 | 5d728bbc-5419-45bf-b206-86fa5df528bf |
 
-## Planned for 2026-04-27 (Mon market open)
-**v10 migration** (approved by user, plan in RESEARCH-LOG 2026-04-27 entry):
-1. Cancel both legacy stops above
-2. Close XOM and NVDA at market
-3. Run fresh gap-scan + Grok catalyst confirmation
-4. Deploy 2-3 v10 candidates with ATR-based trail_price stops
+## Closed (Retired v1 positions)
+- XOM: 135 @ $147.44 entry → closed @ market (~$148.91), +$197 gain (+1.0%)
+- NVDA: 94 @ $210.27 entry → closed @ market (~$208.27), −$188 loss (−0.95%)
